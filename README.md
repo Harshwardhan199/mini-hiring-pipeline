@@ -57,15 +57,15 @@ The LLM **does not generate or execute SQL** and never directly accesses the dat
 
 ### Example queries
 
-| Query | What it resolves |
-|---|---|
-| `Find Priya Sharma` | Name lookup with exact match preferred |
-| `Find Priya Sharam` | Fuzzy name matching can still return Priya Sharma |
-| `Who's in Interview right now?` | `current_stage = Interview` |
-| `Who has been stuck in Screening for more than a week?` | `current_stage = Screening`, duration `> 7 days` |
-| `Who moved to Interview since Monday?` | Stage history: `to_stage = Interview` since the resolved Monday date |
-| `Who reached the Offer stage but didn't get hired?` | Candidate reached `Offer` but has no `Hired` event |
-| `Everyone except rejected candidates` | Excludes candidates whose current stage is `Rejected` |
+| Query                                                   | What it resolves                                                     |
+| ------------------------------------------------------- | -------------------------------------------------------------------- |
+| `Find Priya Sharma`                                     | Name lookup with exact match preferred                               |
+| `Find Priya Sharam`                                     | Fuzzy name matching can still return Priya Sharma                    |
+| `Who's in Interview right now?`                         | `current_stage = Interview`                                          |
+| `Who has been stuck in Screening for more than a week?` | `current_stage = Screening`, duration `> 7 days`                     |
+| `Who moved to Interview since Monday?`                  | Stage history: `to_stage = Interview` since the resolved Monday date |
+| `Who reached the Offer stage but didn't get hired?`     | Candidate reached `Offer` but has no `Hired` event                   |
+| `Everyone except rejected candidates`                   | Excludes candidates whose current stage is `Rejected`                |
 
 Search conditions can also be combined. For example:
 
@@ -179,13 +179,13 @@ The backend URL is configured through the frontend environment variable rather t
 
 The backend is organized into domain-oriented modules under `backend/app/`:
 
-| Module | Responsibility |
-|---|---|
-| `candidates/` | Candidate operations, state machine, schemas, and stage history |
-| `search/` | Search parsing, Pydantic validation, deterministic filtering, and ranking |
-| `llm/` | Groq client and LLM prompt construction |
-| `database/` | SQLAlchemy engine and session factory |
-| `config/` | Environment variable loading through `pydantic-settings` |
+| Module        | Responsibility                                                            |
+| ------------- | ------------------------------------------------------------------------- |
+| `candidates/` | Candidate operations, state machine, schemas, and stage history           |
+| `search/`     | Search parsing, Pydantic validation, deterministic filtering, and ranking |
+| `llm/`        | Groq client and LLM prompt construction                                   |
+| `database/`   | SQLAlchemy engine and session factory                                     |
+| `config/`     | Environment variable loading through `pydantic-settings`                  |
 
 ---
 
@@ -332,23 +332,23 @@ Using a constrained `SearchQuery` object keeps the supported search capabilities
 
 ### Candidate
 
-| Field | Type | Notes |
-|---|---|---|
-| `id` | integer | Primary key |
-| `name` | string | Required |
-| `email` | string | Required and unique |
-| `current_stage` | string | Current pipeline stage |
-| `created_at` | datetime | Stored as UTC |
+| Field           | Type     | Notes                  |
+| --------------- | -------- | ---------------------- |
+| `id`            | integer  | Primary key            |
+| `name`          | string   | Required               |
+| `email`         | string   | Required and unique    |
+| `current_stage` | string   | Current pipeline stage |
+| `created_at`    | datetime | Stored as UTC          |
 
 ### StageEvent
 
-| Field | Type | Notes |
-|---|---|---|
-| `id` | integer | Primary key |
-| `candidate_id` | integer | Foreign key to `Candidate` |
-| `from_stage` | string / null | Previous stage; null for initial `Applied` event |
-| `to_stage` | string | New stage |
-| `occurred_at` | datetime | Stored as UTC |
+| Field          | Type          | Notes                                            |
+| -------------- | ------------- | ------------------------------------------------ |
+| `id`           | integer       | Primary key                                      |
+| `candidate_id` | integer       | Foreign key to `Candidate`                       |
+| `from_stage`   | string / null | Previous stage; null for initial `Applied` event |
+| `to_stage`     | string        | New stage                                        |
+| `occurred_at`  | datetime      | Stored as UTC                                    |
 
 Every stage transition creates a `StageEvent`, including the initial entry into `Applied`.
 
@@ -432,11 +432,11 @@ Name searches use RapidFuzz's character-similarity matching.
 
 The current scoring strategy is:
 
-| Condition | Score |
-|---|---:|
-| Exact case-insensitive match | `100.0` |
-| Query is a substring of candidate name | `95.0` |
-| Otherwise | RapidFuzz similarity ratio |
+| Condition                              |                      Score |
+| -------------------------------------- | -------------------------: |
+| Exact case-insensitive match           |                    `100.0` |
+| Query is a substring of candidate name |                     `95.0` |
+| Otherwise                              | RapidFuzz similarity ratio |
 
 Candidates below the current similarity threshold of `55` are excluded.
 
@@ -467,9 +467,9 @@ while still preferring an exact match when one exists.
 
 ### Health
 
-| Method | Path | Description |
-|---|---|---|
-| `GET` | `/health` | Returns API health status |
+| Method | Path      | Description               |
+| ------ | --------- | ------------------------- |
+| `GET`  | `/health` | Returns API health status |
 
 Example:
 
@@ -481,13 +481,13 @@ Example:
 
 ### Candidates
 
-| Method | Path | Description |
-|---|---|---|
-| `POST` | `/candidates` | Create a candidate; starts at `Applied` |
-| `GET` | `/candidates` | List all candidates |
-| `GET` | `/candidates/{id}` | Candidate details and complete stage history |
-| `POST` | `/candidates/{id}/transition` | Advance to the next stage |
-| `POST` | `/candidates/{id}/reject` | Reject the candidate |
+| Method | Path                          | Description                                  |
+| ------ | ----------------------------- | -------------------------------------------- |
+| `POST` | `/candidates`                 | Create a candidate; starts at `Applied`      |
+| `GET`  | `/candidates`                 | List all candidates                          |
+| `GET`  | `/candidates/{id}`            | Candidate details and complete stage history |
+| `POST` | `/candidates/{id}/transition` | Advance to the next stage                    |
+| `POST` | `/candidates/{id}/reject`     | Reject the candidate                         |
 
 #### Create candidate
 
@@ -560,19 +560,19 @@ Example response shape:
 
 ## Technology Stack
 
-| Layer | Technology |
-|---|---|
-| Frontend | React + TypeScript |
-| Styling | Tailwind CSS |
-| Build tool | Vite |
-| Backend | FastAPI |
-| Backend language | Python |
-| ORM | SQLAlchemy |
-| Validation | Pydantic / pydantic-settings |
-| Database | SQLite |
-| LLM provider | Groq |
-| Fuzzy matching | RapidFuzz |
-| Backend package manager | uv |
+| Layer                   | Technology                   |
+| ----------------------- | ---------------------------- |
+| Frontend                | React + TypeScript           |
+| Styling                 | Tailwind CSS                 |
+| Build tool              | Vite                         |
+| Backend                 | FastAPI                      |
+| Backend language        | Python                       |
+| ORM                     | SQLAlchemy                   |
+| Validation              | Pydantic / pydantic-settings |
+| Database                | SQLite                       |
+| LLM provider            | Groq                         |
+| Fuzzy matching          | RapidFuzz                    |
+| Backend package manager | uv                           |
 
 Exact dependency versions are defined by the project's package manifests.
 
@@ -683,13 +683,6 @@ Install:
 
 Use the versions supported by the project's current package manifests.
 
-### Clone
-
-```bash
-git clone <your-repository-url>
-cd mini-hiring-pipeline
-```
-
 ### Backend
 
 ```bash
@@ -758,10 +751,10 @@ GROQ_API_KEY=your_groq_api_key_here
 GROQ_MODEL=openai/gpt-oss-120b
 ```
 
-| Variable | Description |
-|---|---|
-| `GROQ_API_KEY` | API key used for LLM requests |
-| `GROQ_MODEL` | Groq model used for structured search parsing |
+| Variable       | Description                                   |
+| -------------- | --------------------------------------------- |
+| `GROQ_API_KEY` | API key used for LLM requests                 |
+| `GROQ_MODEL`   | Groq model used for structured search parsing |
 
 The selected model must support the JSON response mode used by the application.
 
@@ -773,8 +766,8 @@ The selected model must support the JSON response mode used by the application.
 VITE_API_BASE_URL=http://127.0.0.1:8000
 ```
 
-| Variable | Description |
-|---|---|
+| Variable            | Description                     |
+| ------------------- | ------------------------------- |
 | `VITE_API_BASE_URL` | Base URL of the FastAPI backend |
 
 Environment files containing secrets should not be committed to source control.
